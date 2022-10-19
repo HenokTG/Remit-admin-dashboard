@@ -1,0 +1,10 @@
+export { default as AddAgent } from './AddAgent';
+export { default as UpdateAgent } from './UpdateAgent';
+export { default as ManagePayment } from './ManagePayment';
+export { default as ManagePackage } from './ManagePackage';
+export { default as ManagePromoCode } from './ManagePromoCode';
+export { default as Packages } from './PackageView';
+export { default as PromoCodes } from './PromoCodeView';
+export { default as Currency } from './Currency';
+export { default as SendNotification } from './SendNotification';
+export { default as PublishNews } from './PublishNews';
