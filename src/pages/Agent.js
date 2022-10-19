@@ -92,7 +92,7 @@ export default function Agent() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -102,7 +102,7 @@ export default function Agent() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchAgents(setLoading, setAGENTLIST);
-  }, [isAgentDeleted]);
+  }, [isAgentDeleted, AGENTLIST]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

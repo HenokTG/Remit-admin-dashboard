@@ -77,19 +77,70 @@ function applySortFilter(array, comparator, query) {
 export default function CardPurchases() {
   const [loading, setLoading] = useState(true);
   const [isPaid, setIsPaid] = useState(false);
-  const [CARDPURCHASELIST, setCARDPURCHASELIST] = useState([]);
 
   const { loggedIn, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
+
+  const [CARDPURCHASELIST, setCARDPURCHASELIST] = useState([]);
+
+  const [agentSearchKey, setAgentSearchKey] = useState('');
+  const [airtimeSearchKey, setAirtimeSearchKey] = useState('');
+  const [isPaidSearchKey, setIsPaidSearchKey] = useState('');
+  const [statusSearchKey, setStatusSearchKey] = useState('');
+  const [searchURL, setSearchURL] = useState('api/remit/admin/transactions/?Status=&Airtime=&Agent=&Paid=');
+
+  const filterProps = [
+    {
+      title: 'Agent Name',
+      child: [...new Set(CARDPURCHASELIST.map((cardPurchase) => cardPurchase.name))],
+      valueSet: agentSearchKey,
+      callChangeFunc: setAgentSearchKey,
+    },
+    {
+      title: 'Package Purchased',
+      child: [...new Set(CARDPURCHASELIST.map((cardPurchase) => cardPurchase.airtime))],
+      valueSet: airtimeSearchKey,
+      callChangeFunc: setAirtimeSearchKey,
+    },
+    {
+      title: 'Commission Paid',
+      child: [...new Set(CARDPURCHASELIST.map((cardPurchase) => cardPurchase.paid))],
+      valueSet: isPaidSearchKey,
+      callChangeFunc: setIsPaidSearchKey,
+    },
+    {
+      title: 'Payment Status',
+      child: [...new Set(CARDPURCHASELIST.map((cardPurchase) => cardPurchase.status))],
+      valueSet: statusSearchKey,
+      callChangeFunc: setStatusSearchKey,
+    },
+  ];
+
+  const handleBackendFilter = () => {
+    const paymentBackendURL = `api/remit/admin/transactions/?Status=${statusSearchKey}&Airtime=${airtimeSearchKey}&Agent=${agentSearchKey}&Paid=${isPaidSearchKey}`;
+    setSearchURL(paymentBackendURL);
+  };
+
+  const clearBackendFilter = () => {
+    setAgentSearchKey(null);
+    setAirtimeSearchKey(null);
+    setIsPaidSearchKey(null);
+    setStatusSearchKey(null);
+    const paymentBackendURL = 'api/remit/admin/transactions/?Status=&Airtime=&Agent=&Paid=';
+    setSearchURL(paymentBackendURL);
+  };
 
   useEffect(() => {
     setLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
-    fetchCardPurchases(setLoading, setCARDPURCHASELIST, profile.is_superuser);
-  }, [isPaid]);
+
+    fetchCardPurchases(setLoading, setCARDPURCHASELIST, searchURL);
+
+    console.log('Search URL: ', searchURL);
+  }, [isPaid, searchURL]);
 
   const [page, setPage] = useState(0);
 
@@ -137,6 +188,9 @@ export default function CardPurchases() {
               filterName={filterTransactionID}
               onFilterName={handleFilterByTransactionID}
               placeHl="Transaction"
+              filterProps={filterProps}
+              handleBackendFilter={handleBackendFilter}
+              clearBackendFilter={clearBackendFilter}
             />
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, paddingInline: '2rem', marginTop: '2rem' }}>
@@ -153,7 +207,6 @@ export default function CardPurchases() {
                       .map((row, index) => {
                         const { transactionID, status, date, airtime, price, name, commision, payment, paid, Payment } =
                           row;
-
                         return (
                           <TableRow hover key={transactionID} tabIndex={-1}>
                             <TableCell component="th" scope="row" padding="normal">
@@ -185,7 +238,7 @@ export default function CardPurchases() {
                                 <PayMenu
                                   payLink={`api/remit/admin/transactions/${transactionID}/`}
                                   setPaid={setIsPaid}
-                                  chgable={status === 'No' && true}
+                                  chgable={!paid}
                                 />
                               </TableCell>
                             )}

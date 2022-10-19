@@ -50,7 +50,7 @@ export default function Packages() {
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -60,7 +60,7 @@ export default function Packages() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPackages(setLoading, setPACKAGELIST);
-  }, [isPackageDeleted]);
+  }, [isPackageDeleted, PACKAGELIST]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

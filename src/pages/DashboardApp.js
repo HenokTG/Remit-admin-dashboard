@@ -33,7 +33,7 @@ export default function DashboardApp() {
 
     fetchDashboardSummary(profilePk, setSummary, 'retrieve');
     fetchNewsUpdate(setNewsList);
-  }, [searchClosed]);
+  }, [searchClosed, summary]);
 
   return (
     <Page title="Dashboard">
@@ -62,7 +62,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={2.5}>
             <AppWidgetSummary
-              title="Sells Total"
+              title="Commission Total"
               total={summary ? summary.total_commission : 0}
               color="info"
               icon={'ant-design:dollar-circle-filled'}
@@ -71,7 +71,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={2.5}>
             <AppWidgetSummary
-              title="Total Payment"
+              title="Commission Paid Total"
               total={summary ? summary.reimbursed_amount : 0}
               color="success"
               icon={'ant-design:carry-out-filled'}
@@ -80,7 +80,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={2.5}>
             <AppWidgetSummary
-              title="Payment Remain"
+              title="Commission Unpaid Total"
               total={summary ? summary.remaining_amount : 0}
               color="warning"
               icon={'ant-design:pause-circle-filled'}

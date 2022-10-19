@@ -17,10 +17,8 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
-
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
 import Iconify from '../components/Iconify';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
@@ -36,8 +34,9 @@ const TABLE_HEAD = [
   { id: 'date', label: 'Payment Time', alignRight: false },
   { id: 'paymentType', label: 'Payment Type', alignRight: false },
   { id: 'bank', label: 'Payment Bank', alignRight: false },
-  { id: 'agent_name', label: 'Payment for', alignRight: false },
+  { id: 'agentName', label: 'Payment for', alignRight: false },
   { id: 'paidAmount', label: 'Paid Amount', alignRight: false },
+  { id: 'totalAgentPayment', label: 'Total Agent Payment', alignRight: false },
   { id: 'totalPayment', label: 'Total Payment', alignRight: false },
   { id: '' },
 ];
@@ -73,20 +72,62 @@ function applySortFilter(array, comparator, query) {
 
 export default function CardPurchases() {
   const [loading, setLoading] = useState(true);
+
+  const { loggedIn } = useGlobalContext();
+  const navigate = useNavigate();
+  const prevLocation = useLocation();
+
   const [isPaymentDeleted, setIsPaymentDeleted] = useState(false);
   const [PAYMENTLIST, setPAYMENTLIST] = useState([]);
 
-  const { loggedIn, profile } = useGlobalContext();
-  const navigate = useNavigate();
-  const prevLocation = useLocation();
+  const [agentSearchKey, setAgentSearchKey] = useState('');
+  const [typeSearchKey, setTypeSearchKey] = useState('');
+  const [bankSearchKey, setBankSearchKey] = useState('');
+  const [searchURL, setSearchURL] = useState('api/agent/admin/payments/?Payment_Type=&Payment_Bank=&Agent_Name=');
+
+  const filterProps = [
+    {
+      title: 'Agent Name',
+      child: [...new Set(PAYMENTLIST.map((pay) => pay.name))],
+      valueSet: agentSearchKey,
+      callChangeFunc: setAgentSearchKey,
+    },
+    {
+      title: 'Payment type',
+      child: [...new Set(PAYMENTLIST.map((pay) => pay.payType))],
+      valueSet: typeSearchKey,
+      callChangeFunc: setTypeSearchKey,
+    },
+    {
+      title: 'Payment Bank',
+      child: [...new Set(PAYMENTLIST.map((pay) => pay.bank))].filter((elem) => elem !== '-'),
+      valueSet: bankSearchKey,
+      callChangeFunc: setBankSearchKey,
+    },
+  ];
+
+  const handleBackendFilter = () => {
+    const paymentBackendURL = `api/agent/admin/payments/?Payment_Type=${typeSearchKey}&Payment_Bank=${bankSearchKey}&Agent_Name=${agentSearchKey}`;
+    setSearchURL(paymentBackendURL);
+  };
+
+  const clearBackendFilter = () => {
+    setAgentSearchKey(null);
+    setTypeSearchKey(null);
+    setBankSearchKey(null);
+    const paymentBackendURL = 'api/agent/admin/payments/?Payment_Type=&Payment_Bank=&Agent_Name=';
+    setSearchURL(paymentBackendURL);
+  };
 
   useEffect(() => {
     setLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
-    fetchPayments(setLoading, setPAYMENTLIST);
-  }, [isPaymentDeleted]);
+
+    fetchPayments(setLoading, setPAYMENTLIST, searchURL);
+
+  }, [isPaymentDeleted, searchURL]);
 
   const [page, setPage] = useState(0);
 
@@ -122,12 +163,6 @@ export default function CardPurchases() {
 
   const isCardPurchaseNotFound = filteredTransactions.length === 0;
 
-  const filterProps = [
-    { title: 'Agent Name', child: [...new Set(PAYMENTLIST.map((pay) => pay.name))] },
-    { title: 'Payment type', child: [...new Set(PAYMENTLIST.map((pay) => pay.payType))] },
-    { title: 'Payment Bank', child: [...new Set(PAYMENTLIST.map((pay) => pay.bank))].filter((elem) => elem !== '-') },
-  ];
-
   return (
     <Page title="Dashboard: Card Purchases">
       {!loading && (
@@ -151,6 +186,8 @@ export default function CardPurchases() {
               onFilterName={handleFilterByPaymentID}
               placeHl="Payment"
               filterProps={filterProps}
+              handleBackendFilter={handleBackendFilter}
+              clearBackendFilter={clearBackendFilter}
             />
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, paddingInline: '2rem', marginTop: '2rem' }}>
@@ -165,7 +202,17 @@ export default function CardPurchases() {
                     {filteredTransactions
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row, index) => {
-                        const { id, date, paymentID, payType, bank, name, paid, total } = row;
+                        const {
+                          id,
+                          date,
+                          paymentID,
+                          paymentType,
+                          bank,
+                          agentName,
+                          paidAmount,
+                          totalAgentPayment,
+                          totalPayment,
+                        } = row;
 
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
@@ -177,11 +224,12 @@ export default function CardPurchases() {
                               </Stack>
                             </TableCell>
                             <TableCell align="right">{date}</TableCell>
-                            <TableCell align="center">{payType}</TableCell>
+                            <TableCell align="center">{paymentType}</TableCell>
                             <TableCell align="left">{bank}</TableCell>
-                            <TableCell align="left">{name}</TableCell>
-                            <TableCell align="right">{paid.toFixed(2)}</TableCell>
-                            <TableCell align="right">{total.toFixed(2)}</TableCell>
+                            <TableCell align="left">{agentName}</TableCell>
+                            <TableCell align="right">{paidAmount.toFixed(2)}</TableCell>
+                            <TableCell align="right">{totalAgentPayment.toFixed(2)}</TableCell>
+                            <TableCell align="right">{totalPayment.toFixed(2)}</TableCell>
 
                             <TableCell align="right">
                               <MoreMenu

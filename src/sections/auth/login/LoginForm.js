@@ -59,7 +59,6 @@ export default function LoginForm() {
         axiosInstance.defaults.headers.Authorization = `JWT ${localStorage.getItem('access_token')}`;
         setLoggedIn(true);
         setProfilePk(postData.agent_name);
-        console.log('Logged in....', redirectTo);
         navigate(!redirectTo ? '/dashboard' : redirectTo, { replace: true });
       })
       .catch((error) => {

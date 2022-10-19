@@ -1,17 +1,18 @@
 import { axiosInstance } from '../axios';
 
-const fetchPayments = (setLoading, setPAYMENTLIST) => {
+const fetchPayments = (setLoading, setPAYMENTLIST, URL) => {
   axiosInstance
-    .get(`api/agent/admin/payments/`)
+    .get(URL)
     .then((res) => {
       const PAYMENTLIST = res.data.map((pay, idx) => ({
         id: pay.id,
         paymentID: pay.transaction_number,
-        payType: pay.payment_type,
+        paymentType: pay.payment_type,
         bank: pay.payment_bank,
-        name: pay.agent_name,
-        paid: pay.paid_amount,
-        total: pay.total_payment,
+        agentName: pay.agent_name,
+        paidAmount: pay.paid_amount,
+        totalAgentPayment: pay.total_agent_payment,
+        totalPayment: pay.total_payment,
 
         get date() {
           const dbDate = new Date(pay.payment_time).toString();

@@ -35,11 +35,21 @@ ListToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   placeHl: PropTypes.string,
-  filterProps: PropTypes.object,
+  filterProps: PropTypes.array,
   onFilterName: PropTypes.func,
+  handleBackendFilter: PropTypes.func,
+  clearBackendFilter: PropTypes.func,
 };
 
-export default function ListToolbar({ numSelected, placeHl, filterName, onFilterName, filterProps }) {
+export default function ListToolbar({
+  numSelected,
+  placeHl,
+  filterName,
+  onFilterName,
+  filterProps,
+  handleBackendFilter,
+  clearBackendFilter,
+}) {
   const [openFilter, setOpenFilter] = useState(false);
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -104,6 +114,8 @@ export default function ListToolbar({ numSelected, placeHl, filterName, onFilter
             onOpenFilter={handleOpenFilter}
             onCloseFilter={handleCloseFilter}
             filterProps={filterProps}
+            handleBackendFilter={handleBackendFilter}
+            clearBackendFilter={clearBackendFilter}
           />
         </Stack>
       )}

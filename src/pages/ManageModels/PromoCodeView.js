@@ -52,7 +52,7 @@ export default function PromoCodes() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -62,7 +62,7 @@ export default function PromoCodes() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPromos(setLoading, setPROMOLIST);
-  }, [isPromocodeDeleted]);
+  }, [isPromocodeDeleted, PROMOLIST]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

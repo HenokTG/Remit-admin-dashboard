@@ -63,7 +63,7 @@ export default function Profile() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
-  }, []);
+  }, [profile]);
 
   return (
     <Page title="Agent Profile View">

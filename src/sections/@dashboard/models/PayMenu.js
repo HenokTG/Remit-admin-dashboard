@@ -25,7 +25,7 @@ export default function PayMenu({ payLink, chgable, setPaid }) {
       .put(payLink, { is_commission_paid: true })
       .then((res) => {
         console.log(res.data);
-        setPaid(true);
+        setPaid(chgable);
       })
       .catch((error) => {
         console.log(error.response.data.detail);

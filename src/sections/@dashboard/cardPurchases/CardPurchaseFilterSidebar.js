@@ -6,12 +6,11 @@ import {
   Stack,
   Button,
   Drawer,
-  Rating,
   Divider,
-  Checkbox,
-  FormGroup,
   IconButton,
   Typography,
+  FormControl,
+  FormLabel,
   RadioGroup,
   FormControlLabel,
 } from '@mui/material';
@@ -32,12 +31,21 @@ export const FILTER_PRICE_OPTIONS = [
 
 CardPurchaseFilterSidebar.propTypes = {
   isOpenFilter: PropTypes.bool,
-  filterProps: PropTypes.object,
+  filterProps: PropTypes.array,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
+  handleBackendFilter: PropTypes.func,
+  clearBackendFilter: PropTypes.func,
 };
 
-export default function CardPurchaseFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, filterProps }) {
+export default function CardPurchaseFilterSidebar({
+  isOpenFilter,
+  onOpenFilter,
+  onCloseFilter,
+  filterProps,
+  handleBackendFilter,
+  clearBackendFilter,
+}) {
   return (
     <>
       <Button
@@ -72,18 +80,36 @@ export default function CardPurchaseFilterSidebar({ isOpenFilter, onOpenFilter, 
         <Scrollbar>
           <Stack spacing={3} sx={{ p: 3 }}>
             {filterProps &&
-              filterProps.map((catg, idx) => (
-                <div key={idx}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    {catg.title}
-                  </Typography>
-                  <RadioGroup>
-                    {catg.child.map((item, index) => (
-                      <FormControlLabel key={index} value={item} control={<Radio />} label={item} />
-                    ))}
-                  </RadioGroup>
-                </div>
-              ))}
+              filterProps.map((catg, idx) => {
+                const { title, child, valueSet, callChangeFunc } = catg;
+                return (
+                  <FormControl key={idx}>
+                    <FormLabel id={`payment-filter-radio_${idx}`}>
+                      <Typography variant="subtitle1" gutterBottom>
+                        {title}
+                      </Typography>
+                    </FormLabel>
+                    <RadioGroup
+                      aria-labelledby={`controlled-radio-buttons-${title}-group`}
+                      value={valueSet}
+                      onChange={(elem) => callChangeFunc(elem.target.value)}
+                    >
+                      {child.map((item, index) => {
+                        const checkBoolFalse = typeof item === 'boolean' && item ? 'Yes' : 'No';
+                        const mylable = typeof item === 'boolean' && checkBoolFalse === 'No' ? 'No' : item;
+                        return (
+                          <FormControlLabel
+                            key={index}
+                            value={item}
+                            control={<Radio />}
+                            label={checkBoolFalse === 'Yes' ? 'Yes' : mylable}
+                          />
+                        );
+                      })}
+                    </RadioGroup>
+                  </FormControl>
+                );
+              })}
           </Stack>
         </Scrollbar>
 
@@ -92,11 +118,24 @@ export default function CardPurchaseFilterSidebar({ isOpenFilter, onOpenFilter, 
             fullWidth
             size="large"
             type="submit"
-            color="inherit"
+            color="primary"
             variant="outlined"
             startIcon={<Iconify icon="ic:round-clear-all" />}
+            sx={{ mb: 1 }}
+            onClick={() => handleBackendFilter()}
           >
-            Clear All
+            Apply Filter
+          </Button>
+          <Button
+            fullWidth
+            size="large"
+            type="submit"
+            color="error"
+            variant="outlined"
+            startIcon={<Iconify icon="ic:round-clear-all" />}
+            onClick={() => clearBackendFilter()}
+          >
+            Clear Filter
           </Button>
         </Box>
       </Drawer>

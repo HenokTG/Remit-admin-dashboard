@@ -16,9 +16,9 @@ const cardList = [...Array(30)].map((_, index) => {
   };
 });
 
-const fetchCardPurchases = (setLoading, setCARDPURCHASELIST, isSuperuser) => {
+const fetchCardPurchases = (setLoading, setCARDPURCHASELIST, URL) => {
   axiosInstance
-    .get(`api/remit${isSuperuser ? '/admin' : ''}/transactions/`)
+    .get(URL)
     .then((res) => {
       const CARDPURCHASELIST = res.data.map((trscn, idx) => ({
         transactionID: trscn.transaction_id,

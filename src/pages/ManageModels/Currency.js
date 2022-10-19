@@ -16,7 +16,7 @@ import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
 export default function Currency() {
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const [isForexRateAdded, setIsForexRateAdded] = useState(false);
 
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function Currency() {
       .catch((error) => {
         console.log(error);
       });
-  }, [isForexRateAdded]);
+  }, [isForexRateAdded, exchangeData]);
 
   const currencyUpdateOn = exchangeData.update_on && new Date(exchangeData.update_on).toString();
   const forexRate = exchangeData.forex_rate && exchangeData.forex_rate.toFixed(2);
