@@ -62,7 +62,7 @@ export default function PromoCodes() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPromos(setLoading, setPROMOLIST);
-  }, [isPromocodeDeleted, PROMOLIST]);
+  }, [isPromocodeDeleted]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

@@ -60,7 +60,7 @@ export default function Packages() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPackages(setLoading, setPACKAGELIST);
-  }, [isPackageDeleted, PACKAGELIST]);
+  }, [isPackageDeleted]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

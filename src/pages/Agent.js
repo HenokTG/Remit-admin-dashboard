@@ -102,7 +102,7 @@ export default function Agent() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchAgents(setLoading, setAGENTLIST);
-  }, [isAgentDeleted, AGENTLIST]);
+  }, [isAgentDeleted]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

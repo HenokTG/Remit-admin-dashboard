@@ -36,7 +36,7 @@ export default function Currency() {
       .catch((error) => {
         console.log(error);
       });
-  }, [isForexRateAdded, exchangeData]);
+  }, [isForexRateAdded]);
 
   const currencyUpdateOn = exchangeData.update_on && new Date(exchangeData.update_on).toString();
   const forexRate = exchangeData.forex_rate && exchangeData.forex_rate.toFixed(2);
