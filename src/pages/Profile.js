@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 
 // @mui
@@ -6,14 +6,12 @@ import { styled } from '@mui/material/styles';
 import { Card, MenuItem, Typography, Box, Avatar } from '@mui/material';
 
 // hooks
-import useResponsive from '../hooks/useResponsive';
+// import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import Logo from '../components/Logo';
 // sections
 import ProfileView from '../sections/auth/profile/ProfileView';
 // modules and context
-import { axiosInstance } from '../axios';
 import { useGlobalContext } from '../context';
 import account from '../_fetchData/account';
 // ----------------------------------------------------------------------
@@ -55,7 +53,7 @@ const AccountStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Profile() {
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
   
@@ -63,6 +61,7 @@ export default function Profile() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
   return (

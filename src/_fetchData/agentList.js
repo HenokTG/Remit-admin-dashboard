@@ -1,27 +1,12 @@
-import { faker } from '@faker-js/faker';
-import { sample } from 'lodash';
 import { axiosInstance } from '../axios';
 
 // ----------------------------------------------------------------------
-
-const users = [...Array(2)].map((_, index) => ({
-  id: faker.datatype.uuid(),
-  avatarUrl: `/static/mock-images/avatars/avatar_${index + 1}.jpg`,
-  name: faker.name.findName(),
-  company: faker.company.companyName(),
-  isVerified: faker.datatype.boolean(),
-  phone: faker.phone.number('+251 9## ## ####'),
-  get email() {
-    return faker.internet.email(this.name, '', 'gmail.com', { allowSpecialCharacters: true });
-  },
-  commision: sample(['10.00%', '12.50%', '5.00%', '8.50%', '11.75%', '16.75%', '7.00%', '15.00%', '4.50', '20.00%']),
-}));
 
 const fetchAgents = (setLoading, setAGENTLIST) => {
   axiosInstance
     .get(`api/agent/profiles/`)
     .then((res) => {
-      const AGENTLIST = res.data.map((profile, idx) => ({
+      const AGENTLIST = res.data.map((profile) => ({
         id: profile.agent_name,
         imageUrl: profile.image,
         agent: profile.agent_name,

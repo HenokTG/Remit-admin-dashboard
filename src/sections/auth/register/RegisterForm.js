@@ -12,7 +12,6 @@ import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 // context and modules
 import { axiosInstance } from '../../../axios';
-import { useGlobalContext } from '../../../context';
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {

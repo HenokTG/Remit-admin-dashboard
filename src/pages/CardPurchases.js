@@ -139,7 +139,7 @@ export default function CardPurchases() {
 
     fetchCardPurchases(setLoading, setCARDPURCHASELIST, searchURL);
 
-    console.log('Search URL: ', searchURL);
+    // eslint-disable-next-line
   }, [isPaid, searchURL]);
 
   const [page, setPage] = useState(0);
@@ -204,7 +204,7 @@ export default function CardPurchases() {
                   <TableBody>
                     {filteredTransactions
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row, index) => {
+                      .map((row) => {
                         const { transactionID, status, date, airtime, price, name, commision, payment, paid, Payment } =
                           row;
                         return (

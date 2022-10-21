@@ -49,7 +49,7 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
           <Scrollbar>
             <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-              {list.slice(margin[0], margin[1]).map((news, idx) => (
+              {list.slice(margin[0], margin[1]).map((news) => (
                 <NewsItem key={news.id} news={news} setDetailView={setIsViewHeadline} setNewsID={setNewsID} />
               ))}
             </Stack>
@@ -91,6 +91,7 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
 NewsItem.propTypes = {
   news: PropTypes.shape({
+    id: PropTypes.number,
     description: PropTypes.string,
     image: PropTypes.string,
     postedAt: PropTypes.instanceOf(Date),
@@ -141,6 +142,7 @@ function NewsDetail({ newsID, setDetailView }) {
 
   useEffect(() => {
     fetchNewsDetail(newsID, setNewDeatil);
+    // eslint-disable-next-line
   }, []);
   
   const { title, description, postedAt } = newDeatil;

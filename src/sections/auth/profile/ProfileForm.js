@@ -63,7 +63,7 @@ export default function ProfileForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (e) => {
+  const onSubmit = async () => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
     const formData = methods.getValues();

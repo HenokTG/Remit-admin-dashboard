@@ -45,6 +45,7 @@ export default function NotificationsPopover() {
 
   useEffect(() => {
     fetchNotifications(profilePk, setNotifications);
+    // eslint-disable-next-line
   }, [open]);
 
   const handleOpen = (event) => {

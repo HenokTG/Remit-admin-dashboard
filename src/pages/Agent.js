@@ -1,5 +1,4 @@
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
@@ -102,6 +101,7 @@ export default function Agent() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchAgents(setLoading, setAGENTLIST);
+    // eslint-disable-next-line
   }, [isAgentDeleted]);
 
   const handleRequestSort = (event, property) => {

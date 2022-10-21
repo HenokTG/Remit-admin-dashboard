@@ -1,10 +1,7 @@
-import { faker } from '@faker-js/faker';
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 // @mui
-import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // import { Telegram } from 'react-share-icons';
 import Telegram from 'react-share-icons/lib/Telegram';
@@ -33,6 +30,7 @@ export default function DashboardApp() {
 
     fetchDashboardSummary(profilePk, setSummary, 'retrieve');
     fetchNewsUpdate(setNewsList);
+    // eslint-disable-next-line
   }, [searchClosed, summary]);
 
   return (

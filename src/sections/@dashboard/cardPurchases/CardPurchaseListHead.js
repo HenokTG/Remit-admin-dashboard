@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 // material
-import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
+import { Box, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -19,11 +19,8 @@ const visuallyHidden = {
 CardPurchaseListHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
-  rowCount: PropTypes.number,
   headLabel: PropTypes.array,
-  numSelected: PropTypes.number,
   onRequestSort: PropTypes.func,
-  onSelectAllClick: PropTypes.func,
 };
 
 export default function CardPurchaseListHead({ order, orderBy, headLabel, onRequestSort }) {

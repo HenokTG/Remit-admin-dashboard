@@ -1,6 +1,3 @@
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 
@@ -25,7 +22,6 @@ import Scrollbar from '../../components/Scrollbar';
 import Iconify from '../../components/Iconify';
 import SearchNotFound from '../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../sections/@dashboard/models';
-import ListToolbar from '../../sections/@dashboard/ListToolbar';
 // mock and context and modules
 import { useGlobalContext } from '../../context';
 import { fetchPromos } from '../../_fetchData/models';
@@ -62,10 +58,12 @@ export default function PromoCodes() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPromos(setLoading, setPROMOLIST);
+    // eslint-disable-next-line
   }, [isPromocodeDeleted]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+
   };
 
   const handleChangeRowsPerPage = (event) => {

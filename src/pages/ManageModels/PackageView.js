@@ -1,6 +1,3 @@
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 // material
@@ -60,6 +57,7 @@ export default function Packages() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
     fetchPackages(setLoading, setPACKAGELIST);
+    // eslint-disable-next-line
   }, [isPackageDeleted]);
 
   const handleChangePage = (event, newPage) => {

@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Link, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 // components
 import MenuPopover from '../../components/MenuPopover';
 // mocks_ and context and modules

@@ -1,12 +1,12 @@
 import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, Typography, FormControlLabel, Checkbox } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { FormProvider, RHFTextField } from '../../components/hook-form';
@@ -36,6 +36,8 @@ export default function Currency() {
       .catch((error) => {
         console.log(error);
       });
+
+    // eslint-disable-next-line
   }, [isForexRateAdded]);
 
   const currencyUpdateOn = exchangeData.update_on && new Date(exchangeData.update_on).toString();

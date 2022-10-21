@@ -4,7 +4,7 @@ const fetchPayments = (setLoading, setPAYMENTLIST, URL) => {
   axiosInstance
     .get(URL)
     .then((res) => {
-      const PAYMENTLIST = res.data.map((pay, idx) => ({
+      const PAYMENTLIST = res.data.map((pay) => ({
         id: pay.id,
         paymentID: pay.transaction_number,
         paymentType: pay.payment_type,

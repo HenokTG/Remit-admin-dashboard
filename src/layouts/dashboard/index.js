@@ -42,6 +42,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     fetchAccount(profilePk, setAccount, setProfile);
+    // eslint-disable-next-line
   }, []);
 
   return (

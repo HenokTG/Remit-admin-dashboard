@@ -18,7 +18,7 @@ import { useGlobalContext } from '../../context';
 export default function AgentUpdateForm() {
   const [active, setActive] = useState(true);
 
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
   const { agentName } = useParams();
@@ -29,6 +29,7 @@ export default function AgentUpdateForm() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
   const AgentUpdateSchema = Yup.object().shape({

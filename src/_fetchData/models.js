@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { axiosInstance } from '../axios';
 
 export const fetchPackages = (setLoading, setPACKAGELIST) => {

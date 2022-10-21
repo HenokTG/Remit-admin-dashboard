@@ -19,6 +19,7 @@ const visuallyHidden = {
 AgentListHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
+  noCheckBox: PropTypes.bool,
   rowCount: PropTypes.number,
   headLabel: PropTypes.array,
   numSelected: PropTypes.number,

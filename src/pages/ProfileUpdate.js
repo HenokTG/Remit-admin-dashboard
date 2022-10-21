@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Link, Container, Typography } from '@mui/material';
+import { Card,  Container, Typography } from '@mui/material';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -11,7 +11,6 @@ import Page from '../components/Page';
 // sections
 import ProfileForm from '../sections/auth/profile/ProfileForm';
 // modules and context
-import { axiosInstance } from '../axios';
 import { useGlobalContext } from '../context';
 // ----------------------------------------------------------------------
 
@@ -21,21 +20,21 @@ const RootStyle = styled('div')(({ theme }) => ({
   },
 }));
 
-const HeaderStyle = styled('header')(({ theme }) => ({
-  top: 0,
-  zIndex: 9,
-  lineHeight: 0,
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  position: 'absolute',
-  padding: theme.spacing(3),
-  justifyContent: 'space-between',
-  [theme.breakpoints.up('md')]: {
-    alignItems: 'flex-start',
-    padding: theme.spacing(7, 5, 0, 7),
-  },
-}));
+// const HeaderStyle = styled('header')(({ theme }) => ({
+//   top: 0,
+//   zIndex: 9,
+//   lineHeight: 0,
+//   width: '100%',
+//   display: 'flex',
+//   alignItems: 'center',
+//   position: 'absolute',
+//   padding: theme.spacing(3),
+//   justifyContent: 'space-between',
+//   [theme.breakpoints.up('md')]: {
+//     alignItems: 'flex-start',
+//     padding: theme.spacing(7, 5, 0, 7),
+//   },
+// }));
 
 const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
@@ -73,9 +72,10 @@ export default function UpdateProfile() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
-  const smUp = useResponsive('up', 'sm');
+  // const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
 

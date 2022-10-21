@@ -14,9 +14,7 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 

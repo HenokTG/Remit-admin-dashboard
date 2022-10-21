@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack, Typography, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // date-fns
-import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import {  LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
@@ -20,7 +20,7 @@ import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
 export default function ManagePromoCode() {
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const [exDate, setExDate] = useState('');
 
   const navigate = useNavigate();
@@ -31,6 +31,7 @@ export default function ManagePromoCode() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
   const PromocodeSchema = Yup.object().shape({

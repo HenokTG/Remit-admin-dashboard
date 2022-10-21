@@ -16,7 +16,7 @@ import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
 export default function ManagePackage() {
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
   const { packageId } = useParams();
@@ -25,6 +25,7 @@ export default function ManagePackage() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
   const PackageSchema = Yup.object().shape({

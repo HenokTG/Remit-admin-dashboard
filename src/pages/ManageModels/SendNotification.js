@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -16,15 +16,15 @@ import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
 export default function PublishNews() {
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
-  const { packageId } = useParams();
 
   useEffect(() => {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+    // eslint-disable-next-line
   }, []);
 
   const PackageSchema = Yup.object().shape({

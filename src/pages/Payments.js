@@ -126,7 +126,7 @@ export default function CardPurchases() {
     }
 
     fetchPayments(setLoading, setPAYMENTLIST, searchURL);
-
+    // eslint-disable-next-line
   }, [isPaymentDeleted, searchURL]);
 
   const [page, setPage] = useState(0);
@@ -201,7 +201,7 @@ export default function CardPurchases() {
                   <TableBody>
                     {filteredTransactions
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row, index) => {
+                      .map((row) => {
                         const {
                           id,
                           date,
