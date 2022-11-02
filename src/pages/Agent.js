@@ -32,13 +32,13 @@ import fetchAgents from '../_fetchData/agentList';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'agent', label: 'Agent', alignRight: false },
-  { id: 'name', label: 'Full Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'commission', label: 'Commission (%)', alignRight: false },
-  { id: 'phone', label: 'Phone Number', alignRight: false },
-  { id: 'email', label: 'Email Address', alignRight: false },
-  { id: 'isVerified', label: 'Active', alignRight: false },
+  { id: 'agent', label: 'Agent'},
+  { id: 'name', label: 'Full Name'},
+  { id: 'company', label: 'Company'},
+  { id: 'commission', label: 'Commission (%)'},
+  { id: 'phone', label: 'Phone Number'},
+  { id: 'email', label: 'Email Address'},
+  { id: 'isVerified', label: 'Active'},
   { id: '' },
 ];
 
@@ -75,7 +75,8 @@ function applySortFilter(array, comparator, query) {
 
 export default function Agent() {
   const [loading, setLoading] = useState(true);
-  const [isAgentDeleted, setIsAgentDeleted] = useState(false);
+
+  const [deletedAgentID, setDeletedAgentID] = useState(0);
 
   const [AGENTLIST, setAGENTLIST] = useState([]);
 
@@ -91,18 +92,21 @@ export default function Agent() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
   useEffect(() => {
     setLoading(true);
+
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
-    }
-    fetchAgents(setLoading, setAGENTLIST);
+    } else if (profile.is_superuser === false) {
+      navigate('/dashboard/');
+    } else fetchAgents(setLoading, setAGENTLIST);
+
     // eslint-disable-next-line
-  }, [isAgentDeleted]);
+  }, [deletedAgentID, profile]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -154,7 +158,7 @@ export default function Agent() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Dashboard: Agent">
+    <Page title="Agent List">
       {!loading && (
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -235,7 +239,10 @@ export default function Agent() {
                             <MoreMenu
                               updateLink={`/dashboard/agent-update/agent=${id}`}
                               deletePath={`api/agent/profiles/${id}/`}
-                              setDeleted={setIsAgentDeleted}
+                              setDeleted={{
+                                setDeletedID: setDeletedAgentID,
+                                deletedID: id,
+                              }}
                             />
                           </TableCell>
                         </TableRow>

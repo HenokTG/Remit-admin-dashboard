@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card,  Container, Typography } from '@mui/material';
+import { Card, Container, Typography } from '@mui/material';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -20,25 +20,9 @@ const RootStyle = styled('div')(({ theme }) => ({
   },
 }));
 
-// const HeaderStyle = styled('header')(({ theme }) => ({
-//   top: 0,
-//   zIndex: 9,
-//   lineHeight: 0,
-//   width: '100%',
-//   display: 'flex',
-//   alignItems: 'center',
-//   position: 'absolute',
-//   padding: theme.spacing(3),
-//   justifyContent: 'space-between',
-//   [theme.breakpoints.up('md')]: {
-//     alignItems: 'flex-start',
-//     padding: theme.spacing(7, 5, 0, 7),
-//   },
-// }));
-
 const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
-  maxWidth: 464,
+  maxWidth: 420,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -53,12 +37,15 @@ const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
   marginLeft: 'calc(232px + (50% - 240px))',
-
   minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
   padding: theme.spacing(12, 0),
+  [theme.breakpoints.down('md')]: {
+    margin: 'auto',
+    textAligh: 'center',
+  },
 }));
 
 // ----------------------------------------------------------------------
@@ -67,7 +54,7 @@ export default function UpdateProfile() {
   const { loggedIn } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
-  
+
   useEffect(() => {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);

@@ -13,23 +13,25 @@ import Page from '../components/Page';
 import ProfileView from '../sections/auth/profile/ProfileView';
 // modules and context
 import { useGlobalContext } from '../context';
-import account from '../_fetchData/account';
 // ----------------------------------------------------------------------
-
-const RootStyle = styled('div')(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    display: 'flex',
-  },
-}));
-
+// Themes
 const SectionStyle = styled(Card)(({ theme }) => ({
-  margin: theme.spacing(5),
-  width: '100%',
   display: 'flex',
+  width: '100%',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
   backgroundColor: theme.palette.grey[500_12],
+}));
+
+const RootStyle = styled('div')(({ theme }) => ({
+  [theme.breakpoints.between('xs', 'md')]: {
+    display: 'flex',
+    margin: theme.spacing(0, 2),
+  },
+  [theme.breakpoints.up('md')]: {
+    margin: theme.spacing(0, 5),
+  },
 }));
 
 const ProfileHeaderStyle = styled('div')(({ theme }) => ({
@@ -38,25 +40,26 @@ const ProfileHeaderStyle = styled('div')(({ theme }) => ({
   width: '100%',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: theme.spacing(2, 2.5),
+  padding: theme.spacing(2, 2),
   backgroundColor: theme.palette.grey[500_12],
 }));
 
 const AccountStyle = styled('div')(({ theme }) => ({
   display: 'flex',
+  flexWrap: 'wrap',
   width: '100%',
   alignItems: 'center',
-  margin: theme.spacing(2, 5),
-  gap: theme.spacing(3),
+  margin: theme.spacing(1),
+  gap: theme.spacing(1),
 }));
 
 // ----------------------------------------------------------------------
 
 export default function Profile() {
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, account, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
-  
+
   useEffect(() => {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
@@ -71,8 +74,8 @@ export default function Profile() {
           <ProfileHeaderStyle>
             <Box>
               <AccountStyle>
-                <Avatar src={account.photoURL} alt="profile" sx={{ height: '20%', width: '20%' }}>
-                  <Avatar src={account.avatorURL} alt="avator" />
+                <Avatar src={account.photoURL} alt="profile" sx={{ width: 75, height: 75 }}>
+                  <Avatar src={account.avatorURL} alt="avator" sx={{ width: 75, height: 75 }} />
                 </Avatar>
                 <Box sx={{ ml: 2 }}>
                   <Typography variant="h4" sx={{ color: 'text.primary' }}>
@@ -85,7 +88,7 @@ export default function Profile() {
               </AccountStyle>
             </Box>
             <MenuItem
-              sx={{ m: 3, color: '#048eff', border: '1px solid #048eff', borderRadius: 1 }}
+              sx={{ m: 3, color: '#f05e09', border: '1px solid #f05e09', borderRadius: 1 }}
               key="Logout"
               to="/agent-profile-update"
               component={RouterLink}
@@ -93,7 +96,7 @@ export default function Profile() {
               Update Agent Profile
             </MenuItem>
           </ProfileHeaderStyle>
-          <ProfileView profile={account} /> {/* Camge This to "profile" object */}
+          <ProfileView profile={profile} /> {/* Camge This to "profile" object */}
         </SectionStyle>
       </RootStyle>
     </Page>

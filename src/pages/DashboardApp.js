@@ -17,7 +17,7 @@ import { useGlobalContext } from '../context';
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const { loggedIn, profilePk, summary, setSummary, searchClosed } = useGlobalContext();
+  const { loggedIn, profilePk, summary, setSummary } = useGlobalContext();
   const [newsList, setNewsList] = useState([]);
 
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export default function DashboardApp() {
     fetchDashboardSummary(profilePk, setSummary, 'retrieve');
     fetchNewsUpdate(setNewsList);
     // eslint-disable-next-line
-  }, [searchClosed, summary]);
+  }, []);
 
   return (
     <Page title="Dashboard">
@@ -51,7 +51,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={2.5}>
             <AppWidgetSummary
-              title="Sells Total"
+              title="Card Sells Total"
               total={summary ? summary.total_sells : 0}
               color="success"
               icon={'ant-design:dollar-circle-filled'}
@@ -60,7 +60,7 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={2.5}>
             <AppWidgetSummary
-              title="Commission Total"
+              title="Commission Owed Total"
               total={summary ? summary.total_commission : 0}
               color="info"
               icon={'ant-design:dollar-circle-filled'}

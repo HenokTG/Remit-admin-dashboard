@@ -39,17 +39,16 @@ const AccountStyle = styled('div')(({ theme }) => ({
 DashboardSidebar.propTypes = {
   isOpenSidebar: PropTypes.bool,
   onCloseSidebar: PropTypes.func,
-  account: PropTypes.object,
 };
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, account }) {
-  const { profile } = useGlobalContext();
+export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
+  const { profile, account } = useGlobalContext();
 
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
 
-  const agentNavList = [navConfig[0], navConfig[2]];
+  const agentNavList = [navConfig[0], navConfig[2], navConfig[3]];
 
   useEffect(() => {
     if (isOpenSidebar) {

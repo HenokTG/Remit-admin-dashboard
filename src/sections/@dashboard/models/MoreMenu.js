@@ -14,11 +14,13 @@ import { axiosInstance } from '../../../axios';
 MoreMenu.propTypes = {
   updateLink: PropTypes.string,
   deletePath: PropTypes.string,
-  setDeleted: PropTypes.func,
+  setDeleted: PropTypes.object,
 };
 export default function MoreMenu({ updateLink, deletePath, setDeleted }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const { setDeletedID, deletedID } = setDeleted;
 
   const handleDelete = (deletePath) => {
     console.log('Delete path: ', deletePath);
@@ -26,7 +28,7 @@ export default function MoreMenu({ updateLink, deletePath, setDeleted }) {
       .delete(deletePath)
       .then((res) => {
         console.log(res.data);
-        setDeleted(true);
+        setDeletedID(deletedID);
       })
       .catch((error) => {
         console.log(error.response.data.detail);

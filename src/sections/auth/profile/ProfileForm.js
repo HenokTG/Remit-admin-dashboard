@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, Typography, InputAdornment, Divider, TextField } from '@mui/material';
+import { Stack, Button, Typography, InputAdornment, Divider, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
@@ -80,8 +80,6 @@ export default function ProfileForm() {
     postData.append('description', formData.description);
     postData.append('image', uploadPhoto);
 
-    console.log([...postData][10][1]);
-
     axiosInstance
       .put(`api/agent/profiles/${profilePk}/`, postData, config)
       .then((res) => {
@@ -115,19 +113,10 @@ export default function ProfileForm() {
           <RHFTextField name="lastName" label="Last name" />
         </Stack>
         <RHFTextField name="businessName" label="Business name" />
-        <TextField
-          name="image"
-          label="Choose Agent Image"
-          type="file"
-          onChange={validatePhoto}
-          inputProps={{
-            multiple: true,
-            required: true,
-            accept: '.png, .jpg, .jpeg',
-          }}
-          autoFocus
-          variant="filled"
-        />
+        <Button variant="outlined" component="label">
+          <h3>Upload Profile Image</h3>
+          <input type="file" name="image" required accept=".png, .jpg, .jpeg" onChange={validatePhoto} />
+        </Button>
         <Divider sx={{ borderStyle: 'dashed' }} />
         <Typography variant="h6" gutterBottom>
           Agent Location

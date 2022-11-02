@@ -35,10 +35,9 @@ const MainStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
-  const { profilePk, setProfile } = useGlobalContext();
+  const { profilePk, setAccount, setProfile } = useGlobalContext();
 
   const [open, setOpen] = useState(false);
-  const [account, setAccount] = useState({});
 
   useEffect(() => {
     fetchAccount(profilePk, setAccount, setProfile);
@@ -47,8 +46,8 @@ export default function DashboardLayout() {
 
   return (
     <RootStyle>
-      <DashboardNavbar onOpenSidebar={() => setOpen(true)} account={account} />
-      <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} account={account} />
+      <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
+      <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>
         <Outlet />
       </MainStyle>

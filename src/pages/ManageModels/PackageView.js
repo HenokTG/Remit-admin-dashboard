@@ -27,19 +27,20 @@ import { fetchPackages } from '../../_fetchData/models';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'packageOrder', label: 'Package order', alignRight: false },
-  { id: 'airtimeValue', label: 'Airtime Value', alignRight: true },
-  { id: 'sellingPriceETB', label: 'Selling Price ETB', alignRight: true },
-  { id: 'forexRate', label: 'USD to ETB rate', alignRight: true },
-  { id: 'sellingPriceUSD', label: 'Selling Price USD', alignRight: true },
-  { id: 'packageDisc', label: 'Package discount (%)', alignRight: true },
+  { id: 'packageOrder', label: 'Package order' },
+  { id: 'airtimeValue', label: 'Airtime Value' },
+  { id: 'sellingPriceETB', label: 'Selling Price ETB' },
+  { id: 'forexRate', label: 'USD to ETB rate' },
+  { id: 'sellingPriceUSD', label: 'Selling Price USD' },
+  { id: 'packageDisc', label: 'Package discount (%)' },
   { id: '' },
 ];
 // ----------------------------------------------------------------------
 
 export default function Packages() {
   const [loading, setLoading] = useState(true);
-  const [isPackageDeleted, setIsPackageDeleted] = useState(false);
+
+  const [deletedPackageID, setDeletedPackageID] = useState(0);
 
   const [PACKAGELIST, setPACKAGELIST] = useState([]);
 
@@ -47,7 +48,7 @@ export default function Packages() {
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -56,9 +57,15 @@ export default function Packages() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+
+    if (profile.is_superuser === false) {
+      navigate('/dashboard/');
+    }
+
     fetchPackages(setLoading, setPACKAGELIST);
+
     // eslint-disable-next-line
-  }, [isPackageDeleted]);
+  }, [deletedPackageID, profile]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -71,12 +78,12 @@ export default function Packages() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PACKAGELIST.length) : 0;
 
-  const sortedPackages = PACKAGELIST
+  const sortedPackages = PACKAGELIST;
 
   const isUserNotFound = sortedPackages.length === 0;
 
   return (
-    <Page title="Dashboard: Agent">
+    <Page title="Mobile Package List">
       {!loading && (
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -86,7 +93,7 @@ export default function Packages() {
             <Button
               variant="contained"
               component={RouterLink}
-              to="/dashboard/manage-models/Packages/add"
+              to="/dashboard/manage-models/packages/add"
               startIcon={<Iconify icon="eva:plus-fill" />}
             >
               New Package
@@ -109,15 +116,18 @@ export default function Packages() {
                             </Label>
                           </TableCell>
                           <TableCell align="right">{value}</TableCell>
-                          <TableCell align="right">{ETB.toFixed(2)}</TableCell>
-                          <TableCell align="right">{forexRate.toFixed(2)}</TableCell>
-                          <TableCell align="right">{USD.toFixed(2)}</TableCell>
-                          <TableCell align="right">{packageDisc.toFixed(2)}</TableCell>
+                          <TableCell align="right">{ETB && ETB.toFixed(2)}</TableCell>
+                          <TableCell align="right">{forexRate && forexRate.toFixed(2)}</TableCell>
+                          <TableCell align="right">{USD && USD.toFixed(2)}</TableCell>
+                          <TableCell align="right">{packageDisc && packageDisc.toFixed(2)}</TableCell>
                           <TableCell align="right">
                             <MoreMenu
-                              updateLink={`/dashboard/manage-models/Packages/update/package_id=${id}`}
+                              updateLink={`/dashboard/manage-models/packages/update/package_id=${id}`}
                               deletePath={`api/remit/admin/packages/${id}/`}
-                              setDeleted={setIsPackageDeleted}
+                              setDeleted={{
+                                setDeletedID: setDeletedPackageID,
+                                deletedID: id,
+                              }}
                             />
                           </TableCell>
                         </TableRow>

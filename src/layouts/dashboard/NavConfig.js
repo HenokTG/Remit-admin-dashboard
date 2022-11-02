@@ -37,11 +37,11 @@ const navConfig = [
       },
       {
         title: 'Packages',
-        path: '/dashboard/manage-models/Packages',
+        path: '/dashboard/manage-models/packages',
       },
       {
         title: 'Promotion Codes',
-        path: '/dashboard/manage-models/Promo-codes',
+        path: '/dashboard/manage-models/promo-codes',
       },
       {
         title: 'Publish News',

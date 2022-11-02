@@ -1,14 +1,13 @@
 import { filter } from 'lodash';
 
 import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // material
 import {
   Container,
   Card,
   Stack,
-  Button,
   Table,
   TableRow,
   TableBody,
@@ -19,26 +18,24 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import CardPurchaseListHead from '../sections/@dashboard/cardPurchases/CardPurchaseListHead';
-import { MoreMenu } from '../sections/@dashboard/models';
+import PaymentListHead from '../sections/@dashboard/cardPurchases/Pay_Purcahse_ListHead';
 import ListToolbar from '../sections/@dashboard/ListToolbar';
-// mock
+// modules and  context
 import fetchPayments from '../_fetchData/paymentList';
 import { useGlobalContext } from '../context';
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'paymentID', label: 'Transaction ID', alignRight: false },
-  { id: 'date', label: 'Payment Time', alignRight: false },
-  { id: 'paymentType', label: 'Payment Type', alignRight: false },
-  { id: 'bank', label: 'Payment Bank', alignRight: false },
-  { id: 'agentName', label: 'Payment for', alignRight: false },
-  { id: 'paidAmount', label: 'Paid Amount', alignRight: false },
-  { id: 'totalAgentPayment', label: 'Total Agent Payment', alignRight: false },
-  { id: 'totalPayment', label: 'Total Payment', alignRight: false },
-  { id: '' },
+  { id: 'paymentID', label: 'Payment ID' },
+  { id: 'date', label: 'Payment Time' },
+  { id: 'paymentType', label: 'Payment Type' },
+  { id: 'bank', label: 'Payment Bank' },
+  { id: 'agentName', label: 'Payment for' },
+  { id: 'cardPaidID', label: 'Card Repaid ID' },
+  { id: 'paidAmount', label: 'Paid Amount' },
+  { id: 'totalAgentPayment', label: 'Total Agent Payment' },
+  { id: 'totalPayment', label: 'Total Payment' },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -73,28 +70,31 @@ function applySortFilter(array, comparator, query) {
 export default function CardPurchases() {
   const [loading, setLoading] = useState(true);
 
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile, profilePk } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
-  const [isPaymentDeleted, setIsPaymentDeleted] = useState(false);
+  const intialFeatchURL = profile.is_superuser
+    ? 'api/agent/admin/payments/?Payment_Type=&Payment_Bank=&Agent_Name='
+    : `api/agent/list-payments/${profilePk}`;
+
   const [PAYMENTLIST, setPAYMENTLIST] = useState([]);
 
   const [agentSearchKey, setAgentSearchKey] = useState('');
   const [typeSearchKey, setTypeSearchKey] = useState('');
   const [bankSearchKey, setBankSearchKey] = useState('');
-  const [searchURL, setSearchURL] = useState('api/agent/admin/payments/?Payment_Type=&Payment_Bank=&Agent_Name=');
+  const [searchURL, setSearchURL] = useState(intialFeatchURL);
 
   const filterProps = [
     {
       title: 'Agent Name',
-      child: [...new Set(PAYMENTLIST.map((pay) => pay.name))],
+      child: [...new Set(PAYMENTLIST.map((pay) => pay.agentName))],
       valueSet: agentSearchKey,
       callChangeFunc: setAgentSearchKey,
     },
     {
       title: 'Payment type',
-      child: [...new Set(PAYMENTLIST.map((pay) => pay.payType))],
+      child: [...new Set(PAYMENTLIST.map((pay) => pay.paymentType))],
       valueSet: typeSearchKey,
       callChangeFunc: setTypeSearchKey,
     },
@@ -125,15 +125,15 @@ export default function CardPurchases() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
 
-    fetchPayments(setLoading, setPAYMENTLIST, searchURL);
+    fetchPayments(profilePk, setLoading, setPAYMENTLIST, searchURL);
     // eslint-disable-next-line
-  }, [isPaymentDeleted, searchURL]);
+  }, [searchURL]);
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
-  const [orderBy, setOrderBy] = useState('paymentID');
+  const [orderBy, setOrderBy] = useState('date');
 
   const [filterPaymentID, setFilterPaymentID] = useState('');
 
@@ -164,21 +164,13 @@ export default function CardPurchases() {
   const isCardPurchaseNotFound = filteredTransactions.length === 0;
 
   return (
-    <Page title="Dashboard: Card Purchases">
+    <Page title="Payment Recordings">
       {!loading && (
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
               Payments
             </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="/dashboard/payment-made/add"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New Payment
-            </Button>
           </Stack>
           <Card>
             <ListToolbar
@@ -192,55 +184,47 @@ export default function CardPurchases() {
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, paddingInline: '2rem', marginTop: '2rem' }}>
                 <Table>
-                  <CardPurchaseListHead
+                  <PaymentListHead
                     order={order}
                     orderBy={orderBy}
-                    headLabel={TABLE_HEAD}
+                    headLabel={profile.is_superuser ? TABLE_HEAD : TABLE_HEAD.slice(0, 8)}
                     onRequestSort={handleRequestSort}
                   />
                   <TableBody>
-                    {filteredTransactions
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => {
-                        const {
-                          id,
-                          date,
-                          paymentID,
-                          paymentType,
-                          bank,
-                          agentName,
-                          paidAmount,
-                          totalAgentPayment,
-                          totalPayment,
-                        } = row;
+                    {filteredTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const {
+                        id,
+                        date,
+                        paymentID,
+                        paymentType,
+                        bank,
+                        agentName,
+                        cardPaidID,
+                        paidAmount,
+                        totalAgentPayment,
+                        totalPayment,
+                      } = row;
 
-                        return (
-                          <TableRow hover key={id} tabIndex={-1}>
-                            <TableCell component="th" scope="row" padding="normal">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Typography variant="subtitle2" noWrap>
-                                  {paymentID}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="right">{date}</TableCell>
-                            <TableCell align="center">{paymentType}</TableCell>
-                            <TableCell align="left">{bank}</TableCell>
-                            <TableCell align="left">{agentName}</TableCell>
-                            <TableCell align="right">{paidAmount.toFixed(2)}</TableCell>
-                            <TableCell align="right">{totalAgentPayment.toFixed(2)}</TableCell>
-                            <TableCell align="right">{totalPayment.toFixed(2)}</TableCell>
-
-                            <TableCell align="right">
-                              <MoreMenu
-                                updateLink={`/dashboard/payment-made/update/payment_number=${id}`}
-                                deletePath={`api/agent/admin/payments/${id}/`}
-                                setDeleted={setIsPaymentDeleted}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                      return (
+                        <TableRow hover key={id} tabIndex={-1}>
+                          <TableCell component="th" scope="row" padding="normal">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {paymentID}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell align="right">{date}</TableCell>
+                          <TableCell align="center">{paymentType}</TableCell>
+                          <TableCell align="left">{bank}</TableCell>
+                          <TableCell align="left">{agentName}</TableCell>
+                          <TableCell align="left">{cardPaidID}</TableCell>
+                          <TableCell align="right">{paidAmount.toFixed(2)}</TableCell>
+                          <TableCell align="right">{totalAgentPayment.toFixed(2)}</TableCell>
+                          {profile.is_superuser && <TableCell align="right">{totalPayment.toFixed(2)}</TableCell>}
+                        </TableRow>
+                      );
+                    })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
                         <TableCell colSpan={6} />

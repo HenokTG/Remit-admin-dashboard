@@ -6,21 +6,37 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
+import { styled } from '@mui/material/styles';
 import { Stack, Typography, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // date-fns
-import {  LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { FormProvider, RHFTextField } from '../../components/hook-form';
+import Page from '../../components/Page';
 // context and modules
 import { axiosInstance } from '../../axios';
 import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
+const MyFormStyle = styled('div')(({ theme }) => ({
+  marginInline: '10%',
+  textAlign: 'center',
+  [theme.breakpoints.between('sm', 'md')]: {
+    marginInline: '15%',
+  },
+  [theme.breakpoints.between('md', 'lg')]: {
+    marginInline: '20%',
+  },
+  [theme.breakpoints.up('lg')]: {
+    marginInline: '25%',
+  },
+}));
+
 export default function ManagePromoCode() {
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile } = useGlobalContext();
   const [exDate, setExDate] = useState('');
 
   const navigate = useNavigate();
@@ -31,8 +47,13 @@ export default function ManagePromoCode() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+
+    if (profile.is_superuser === false) {
+      navigate('/dashboard/');
+    }
+
     // eslint-disable-next-line
-  }, []);
+  }, [profile]);
 
   const PromocodeSchema = Yup.object().shape({
     promoter: Yup.string().required('Promoter name is required'),
@@ -91,31 +112,35 @@ export default function ManagePromoCode() {
   };
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3} sx={{ marginInline: '30%' }}>
-        <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', marginBottom: '1rem' }}>
-          {promoCode ? 'Update' : 'Add'} Promotion Code Detail
-        </Typography>
-        <RHFTextField name="promoter" label="Promoter name" />
-        <RHFTextField name="promoCode" label="Promotion code" />
-        <RHFTextField name="promo_discountRate" label="Promotion Discount rate in percent" />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            value={exDate}
-            name="expiryDate"
-            label="Promo code expiry date"
-            InputProps={{ required: true }}
-            onChange={(dateValue) => {
-              setExDate(dateValue);
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
+    <Page title="Manage Promotion Codes">
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <MyFormStyle>
+          <Stack spacing={3}>
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', marginBottom: '1rem' }}>
+              {promoCode ? 'Update' : 'Add'} Promotion Code Detail
+            </Typography>
+            <RHFTextField name="promoter" label="Promoter name" />
+            <RHFTextField name="promoCode" label="Promotion code" />
+            <RHFTextField name="promo_discountRate" label="Promotion Discount rate in percent" />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                value={exDate}
+                name="expiryDate"
+                label="Promo code expiry date"
+                InputProps={{ required: true }}
+                onChange={(dateValue) => {
+                  setExDate(dateValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          {promoCode ? 'Update' : 'Add'} Prono Code
-        </LoadingButton>
-      </Stack>
-    </FormProvider>
+            <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+              {promoCode ? 'Update' : 'Add'} Prono Code
+            </LoadingButton>
+          </Stack>
+        </MyFormStyle>
+      </FormProvider>
+    </Page>
   );
 }

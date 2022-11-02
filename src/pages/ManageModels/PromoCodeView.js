@@ -28,19 +28,20 @@ import { fetchPromos } from '../../_fetchData/models';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'promoter', label: 'Promoter', alignRight: false },
-  { id: 'promo_code', label: 'Promo code', alignRight: false },
-  { id: 'promo_discount_rate', label: 'Promotion Discount (%)', alignRight: true },
-  { id: 'promo_expiry_date', label: 'Promo Code Expiry Date', alignRight: true },
-  { id: 'isExpired', label: 'Expired', alignRight: false },
-  { id: 'isValidFor', label: 'Days until Expiration', alignRight: false },
+  { id: 'promoter', label: 'Promoter' },
+  { id: 'promo_code', label: 'Promo code' },
+  { id: 'promo_discount_rate', label: 'Promotion Discount (%)' },
+  { id: 'promo_expiry_date', label: 'Promo Code Expiry Date' },
+  { id: 'isExpired', label: 'Expired' },
+  { id: 'isValidFor', label: 'Days until Expiration' },
   { id: '' },
 ];
 // ----------------------------------------------------------------------
 
 export default function PromoCodes() {
   const [loading, setLoading] = useState(true);
-  const [isPromocodeDeleted, setIsPromocodeDeleted] = useState(false);
+
+  const [deletedPromocodeID, setDeletedPromocodeID] = useState(0);
 
   const [PROMOLIST, setPROMOLIST] = useState([]);
 
@@ -48,7 +49,7 @@ export default function PromoCodes() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -57,13 +58,17 @@ export default function PromoCodes() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+
+    if (profile.is_superuser === false) {
+      navigate('/dashboard/');
+    }
+
     fetchPromos(setLoading, setPROMOLIST);
     // eslint-disable-next-line
-  }, [isPromocodeDeleted]);
+  }, [deletedPromocodeID, profile]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -77,7 +82,7 @@ export default function PromoCodes() {
   const isUserNotFound = sortedPromocodes.length === 0;
 
   return (
-    <Page title="Dashboard: Agent">
+    <Page title="Promotion Code List">
       {!loading && (
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -87,7 +92,7 @@ export default function PromoCodes() {
             <Button
               variant="contained"
               component={RouterLink}
-              to="/dashboard/manage-models/Promo-codes/add"
+              to="/dashboard/manage-models/promo-codes/add"
               startIcon={<Iconify icon="eva:plus-fill" />}
             >
               New Promo-Code
@@ -131,9 +136,12 @@ export default function PromoCodes() {
                           </TableCell>
                           <TableCell align="right">
                             <MoreMenu
-                              updateLink={`/dashboard/manage-models/Promo-codes/update/promo_code=${code}`}
+                              updateLink={`/dashboard/manage-models/promo-codes/update/promo_code=${code}`}
                               deletePath={`api/remit/admin/promo-codes/${code}/`}
-                              setDeleted={setIsPromocodeDeleted}
+                              setDeleted={{
+                                setDeletedID: setDeletedPromocodeID,
+                                deletedID: id,
+                              }}
                             />
                           </TableCell>
                         </TableRow>

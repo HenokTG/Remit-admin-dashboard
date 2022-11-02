@@ -1,6 +1,6 @@
 export { default as AddAgent } from './AddAgent';
 export { default as UpdateAgent } from './UpdateAgent';
-export { default as ManagePayment } from './ManagePayment';
+export { default as SavePayment } from './SavePayment';
 export { default as ManagePackage } from './ManagePackage';
 export { default as ManagePromoCode } from './ManagePromoCode';
 export { default as Packages } from './PackageView';

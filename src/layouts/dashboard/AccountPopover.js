@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
@@ -28,12 +26,8 @@ const MENU_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-AccountPopover.propTypes = {
-  account: PropTypes.object,
-};
-
-export default function AccountPopover({ account }) {
-  const { setLoggedIn, setProfilePk, setProfile } = useGlobalContext();
+export default function AccountPopover() {
+  const { setLoggedIn, account, setProfilePk, setProfile } = useGlobalContext();
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);

@@ -21,9 +21,10 @@ axiosInstance.interceptors.response.use(
     if (typeof error.response === 'undefined') {
       alert(
         `A server/network error occurred. ' 
-          'Looks like CORS might be the problem. ' 
-          'Sorry about this - we will get it fixed shortly.`
+          'Looks like session might be expired. Login again' `
       );
+      const prevLocation = window.location;
+      window.location.href = `/login?redirectTo=${prevLocation.pathname}`;
       return Promise.reject(error);
     }
 

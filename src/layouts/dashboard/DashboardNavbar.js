@@ -42,11 +42,9 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
 
 DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
-  account: PropTypes.object,
 };
 
-export default function DashboardNavbar({ onOpenSidebar, account }) {
-
+export default function DashboardNavbar({ onOpenSidebar }) {
   const { profile } = useGlobalContext();
   const { pathname } = useLocation();
 
@@ -71,7 +69,7 @@ export default function DashboardNavbar({ onOpenSidebar, account }) {
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           <NotificationsPopover />
-          <AccountPopover account={account} />
+          <AccountPopover />
         </Stack>
       </ToolbarStyle>
     </RootStyle>

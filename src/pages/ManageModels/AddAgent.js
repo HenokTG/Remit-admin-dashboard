@@ -6,18 +6,34 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
+import { styled } from '@mui/material/styles';
 import { Stack, IconButton, InputAdornment, Typography, FormControlLabel, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../components/hook-form';
+import Page from '../../components/Page';
+
 // context and modules
 import { axiosInstance } from '../../axios';
 import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
+const MyFormStyle = styled('div')(({ theme }) => ({
+  marginInline: '10%',
+  textAlign: 'center',
+  [theme.breakpoints.between('sm', 'md')]: {
+    marginInline: '15%',
+  },
+  [theme.breakpoints.between('md', 'lg')]: {
+    marginInline: '20%',
+  },
+  [theme.breakpoints.up('lg')]: {
+    marginInline: '25%',
+  },
+}));
 
 export default function AgentAddForm() {
-  const { loggedIn } = useGlobalContext();
+  const { loggedIn, profile } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
@@ -25,8 +41,13 @@ export default function AgentAddForm() {
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
+
+    if (profile.is_superuser === false) {
+      navigate('/dashboard/');
+    }
+
     // eslint-disable-next-line
-  }, []);
+  }, [profile]);
 
   const [showPassword, setShowPassword] = useState(false);
   const [active, setActive] = useState(true);
@@ -83,62 +104,66 @@ export default function AgentAddForm() {
   };
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3} sx={{ marginInline: '30%' }}>
-        <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', marginBottom: '1rem' }}>
-          Add Agent
-        </Typography>
-        <RHFTextField name="agentName" label="Agent name" />
-        <RHFTextField name="email" label="Email address" />
-        <RHFTextField
-          name="phone"
-          label="Phone number"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">+251</InputAdornment>,
-            step: '0.01',
-          }}
-        />
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <RHFTextField sx={{ width: '50%' }} name="commision" label="Agent commision in percent" />
-          <FormControlLabel
-            control={<Checkbox defaultChecked onChange={(e) => setActive(e.target.checked)} />}
-            label="Activate Agent"
-          />
-        </Stack>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <RHFTextField
-            name="password"
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <RHFTextField
-            name="password2"
-            label="Confirm password"
-            type={showPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Stack>
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Add Agent
-        </LoadingButton>
-      </Stack>
-    </FormProvider>
+    <Page title="Create Agent">
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <MyFormStyle>
+          <Stack spacing={3}>
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', marginBottom: '1rem' }}>
+              Add Agent
+            </Typography>
+            <RHFTextField name="agentName" label="Agent name" />
+            <RHFTextField name="email" label="Email address" />
+            <RHFTextField
+              name="phone"
+              label="Phone number"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">+251</InputAdornment>,
+                step: '0.01',
+              }}
+            />
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <RHFTextField sx={{ width: '50%' }} name="commision" label="Agent commision in percent" />
+              <FormControlLabel
+                control={<Checkbox defaultChecked onChange={(e) => setActive(e.target.checked)} />}
+                label="Activate Agent"
+              />
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <RHFTextField
+                name="password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <RHFTextField
+                name="password2"
+                label="Confirm password"
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Stack>
+            <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+              Add Agent
+            </LoadingButton>
+          </Stack>
+        </MyFormStyle>
+      </FormProvider>
+    </Page>
   );
 }

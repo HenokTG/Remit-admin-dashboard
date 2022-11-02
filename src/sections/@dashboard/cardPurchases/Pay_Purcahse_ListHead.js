@@ -16,14 +16,14 @@ const visuallyHidden = {
   clip: 'rect(0 0 0 0)',
 };
 
-CardPurchaseListHead.propTypes = {
+TableHeader.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
   headLabel: PropTypes.array,
   onRequestSort: PropTypes.func,
 };
 
-export default function CardPurchaseListHead({ order, orderBy, headLabel, onRequestSort }) {
+export default function TableHeader({ order, orderBy, headLabel, onRequestSort }) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -32,11 +32,7 @@ export default function CardPurchaseListHead({ order, orderBy, headLabel, onRequ
     <TableHead>
       <TableRow>
         {headLabel.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.alignRight ? 'right' : 'left'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
+          <TableCell key={headCell.id} align="center" sortDirection={orderBy === headCell.id ? order : false}>
             <TableSortLabel
               hideSortIcon
               active={orderBy === headCell.id}

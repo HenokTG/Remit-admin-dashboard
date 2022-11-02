@@ -22,23 +22,23 @@ import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import CardPurchaseListHead from '../sections/@dashboard/cardPurchases/CardPurchaseListHead';
+import CardPurchaseListHead from '../sections/@dashboard/cardPurchases/Pay_Purcahse_ListHead';
 import { PayMenu } from '../sections/@dashboard/models';
 import ListToolbar from '../sections/@dashboard/ListToolbar';
-// mock
+// modules and  context
 import fetchCardPurchases from '../_fetchData/cardPurchaseList';
 import { useGlobalContext } from '../context';
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'transactionID', label: 'Transaction ID', alignRight: false },
-  { id: 'status', label: 'Transaction Status', alignRight: false },
-  { id: 'date', label: 'Purchased on', alignRight: false },
-  { id: 'airtime', label: 'Airtime Value', alignRight: false },
-  { id: 'sells', label: 'Selling Price', alignRight: false },
-  { id: 'name', label: 'Agent Name', alignRight: false },
-  { id: 'commision', label: 'Commission', alignRight: false },
-  { id: 'payment', label: 'Agent Payment', alignRight: false },
-  { id: 'isPaid', label: 'Agent Paid', alignRight: false },
+  { id: 'transactionID', label: 'Purchase ID' },
+  { id: 'status', label: 'Transaction Status' },
+  { id: 'date', label: 'Purchased on' },
+  { id: 'airtime', label: 'Airtime Value' },
+  { id: 'sells', label: 'Selling Price' },
+  { id: 'name', label: 'Agent Name' },
+  { id: 'commision', label: 'Commission (%)' },
+  { id: 'payment', label: 'Agent Payment' },
+  { id: 'isPaid', label: 'Agent Paid' },
   { id: '' },
 ];
 
@@ -76,11 +76,14 @@ function applySortFilter(array, comparator, query) {
 
 export default function CardPurchases() {
   const [loading, setLoading] = useState(true);
-  const [isPaid, setIsPaid] = useState(false);
 
-  const { loggedIn, profile } = useGlobalContext();
+  const { loggedIn, profile, profilePk } = useGlobalContext();
   const navigate = useNavigate();
   const prevLocation = useLocation();
+
+  const intialFeatchURL = profile.is_superuser
+    ? 'api/remit/admin/transactions/?Status=&Airtime=&Agent=&Paid='
+    : `api/remit/transactions/${profilePk}`;
 
   const [CARDPURCHASELIST, setCARDPURCHASELIST] = useState([]);
 
@@ -88,7 +91,7 @@ export default function CardPurchases() {
   const [airtimeSearchKey, setAirtimeSearchKey] = useState('');
   const [isPaidSearchKey, setIsPaidSearchKey] = useState('');
   const [statusSearchKey, setStatusSearchKey] = useState('');
-  const [searchURL, setSearchURL] = useState('api/remit/admin/transactions/?Status=&Airtime=&Agent=&Paid=');
+  const [searchURL, setSearchURL] = useState(intialFeatchURL);
 
   const filterProps = [
     {
@@ -118,7 +121,8 @@ export default function CardPurchases() {
   ];
 
   const handleBackendFilter = () => {
-    const paymentBackendURL = `api/remit/admin/transactions/?Status=${statusSearchKey}&Airtime=${airtimeSearchKey}&Agent=${agentSearchKey}&Paid=${isPaidSearchKey}`;
+    const paymentBackendURL = `api/remit/admin/transactions/?Status=${statusSearchKey}&Airtime=
+                                    ${airtimeSearchKey}&Agent=${agentSearchKey}&Paid=${isPaidSearchKey}`;
     setSearchURL(paymentBackendURL);
   };
 
@@ -137,16 +141,16 @@ export default function CardPurchases() {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
 
-    fetchCardPurchases(setLoading, setCARDPURCHASELIST, searchURL);
+    fetchCardPurchases(profilePk, setLoading, setCARDPURCHASELIST, searchURL);
 
     // eslint-disable-next-line
-  }, [isPaid, searchURL]);
+  }, [searchURL]);
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
-  const [orderBy, setOrderBy] = useState('transactionID');
+  const [orderBy, setOrderBy] = useState('date');
 
   const [filterTransactionID, setFilterTransactionID] = useState('');
 
@@ -177,7 +181,7 @@ export default function CardPurchases() {
   const isCardPurchaseNotFound = filteredTransactions.length === 0;
 
   return (
-    <Page title="Dashboard: Card Purchases">
+    <Page title="Card Purchase List">
       {!loading && (
         <Container>
           <Typography variant="h4" sx={{ mb: 5 }}>
@@ -198,53 +202,50 @@ export default function CardPurchases() {
                   <CardPurchaseListHead
                     order={order}
                     orderBy={orderBy}
-                    headLabel={TABLE_HEAD}
+                    headLabel={profile.is_superuser ? TABLE_HEAD : TABLE_HEAD.slice(0, 9)}
                     onRequestSort={handleRequestSort}
                   />
                   <TableBody>
-                    {filteredTransactions
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => {
-                        const { transactionID, status, date, airtime, price, name, commision, payment, paid, Payment } =
-                          row;
-                        return (
-                          <TableRow hover key={transactionID} tabIndex={-1}>
-                            <TableCell component="th" scope="row" padding="normal">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Typography variant="subtitle2" noWrap>
-                                  {transactionID}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="center">
-                              <Label variant="ghost" color={(status === 'COMMITTED' && 'warning') || 'success'}>
-                                {status}
-                              </Label>
-                            </TableCell>
-                            <TableCell align="right">{date}</TableCell>
-                            <TableCell align="right">{airtime}</TableCell>
-                            <TableCell align="right">{price.toFixed(2)}</TableCell>
-                            <TableCell align="left">{name}</TableCell>
-                            <TableCell align="right">{(commision * 100).toFixed(2)}</TableCell>
-                            <TableCell align="right">{payment ? payment.toFixed(2) : Payment.toFixed(2)}</TableCell>
-                            <TableCell align="center">
-                              <Label variant="ghost" color={(!paid && 'error') || 'success'}>
-                                {paid ? 'Yes' : 'No'}
-                              </Label>
-                            </TableCell>
+                    {filteredTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const { transactionID, status, date, airtime, price, name, commision, payment, paid, Payment } =
+                        row;
+                      return (
+                        <TableRow hover key={transactionID} tabIndex={-1}>
+                          <TableCell component="th" scope="row" padding="normal">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {transactionID}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Label variant="ghost" color={(status === 'COMMITTED' && 'warning') || 'success'}>
+                              {status}
+                            </Label>
+                          </TableCell>
+                          <TableCell align="right">{date}</TableCell>
+                          <TableCell align="right">{airtime}</TableCell>
+                          <TableCell align="right">{price.toFixed(2)}</TableCell>
+                          <TableCell align="left">{name}</TableCell>
+                          <TableCell align="right">{(commision * 100).toFixed(2)}</TableCell>
+                          <TableCell align="right">{payment ? payment.toFixed(2) : Payment.toFixed(2)}</TableCell>
+                          <TableCell align="center">
+                            <Label variant="ghost" color={(!paid && 'error') || 'success'}>
+                              {paid ? 'Yes' : 'No'}
+                            </Label>
+                          </TableCell>
 
-                            {profile.is_superuser && (
-                              <TableCell align="right">
-                                <PayMenu
-                                  payLink={`api/remit/admin/transactions/${transactionID}/`}
-                                  setPaid={setIsPaid}
-                                  chgable={!paid}
-                                />
-                              </TableCell>
-                            )}
-                          </TableRow>
-                        );
-                      })}
+                          {profile.is_superuser && (
+                            <TableCell align="right">
+                              <PayMenu
+                                payLink={`/dashboard/payment-made/save/cardTnxID=${transactionID}`}
+                                changeable={status === 'APPROVED' && !paid}
+                              />
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      );
+                    })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
                         <TableCell colSpan={6} />

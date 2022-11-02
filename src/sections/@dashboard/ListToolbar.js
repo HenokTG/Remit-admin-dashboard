@@ -6,6 +6,8 @@ import { Stack, Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAd
 // component
 import Iconify from '../../components/Iconify';
 import { CardPurchaseFilterSidebar } from './cardPurchases';
+// modules and  context
+import { useGlobalContext } from '../../context';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
@@ -51,6 +53,8 @@ export default function ListToolbar({
   clearBackendFilter,
 }) {
   const [openFilter, setOpenFilter] = useState(false);
+  const { profile } = useGlobalContext();
+
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };
@@ -99,7 +103,7 @@ export default function ListToolbar({
           </IconButton>
         </Tooltip>
       )}
-      {placeHl !== 'Users...' && (
+      {profile.is_superuser && placeHl !== 'Users...' && (
         <Stack
           direction="row"
           flexWrap="wrap"

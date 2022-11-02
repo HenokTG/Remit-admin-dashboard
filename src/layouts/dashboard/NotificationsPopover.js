@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { noCase } from 'change-case';
+import { sentenceCase } from 'change-case';
 import { useState, useEffect, useRef } from 'react';
 // @mui
 import {
@@ -42,11 +42,12 @@ export default function NotificationsPopover() {
   const totalRead = readNotice.length;
 
   const [open, setOpen] = useState(null);
+  const [markedID, setMarkedID] = useState(0);
 
   useEffect(() => {
     fetchNotifications(profilePk, setNotifications);
     // eslint-disable-next-line
-  }, [open]);
+  }, [open, markedID]);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -62,6 +63,7 @@ export default function NotificationsPopover() {
         .get(`api/agent/notifications/update-all/${profilePk}`)
         .then((res) => {
           console.log(res);
+          setMarkedID('All');
         })
         .catch((error) => {
           console.log(error);
@@ -117,7 +119,7 @@ export default function NotificationsPopover() {
             }
           >
             {unReadNotice.map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+              <NotificationItem key={notification.id} notification={notification} setMarkedID={setMarkedID} />
             ))}
           </List>
 
@@ -135,18 +137,19 @@ export default function NotificationsPopover() {
           </List>
         </Scrollbar>
         <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Box sx={{ p: 1 }}>
-          {limitRead < totalRead ? (
-            <Button fullWidth disableRipple onClick={() => setLimitRead(totalRead)}>
-              View All
-            </Button>
-          ) : (
-            <Button fullWidth disableRipple onClick={() => setLimitRead(3)}>
-              View Less
-            </Button>
-          )}
-        </Box>
+        {limitRead !== totalRead && (
+          <Box sx={{ p: 1 }}>
+            {limitRead < totalRead ? (
+              <Button fullWidth disableRipple onClick={() => setLimitRead(totalRead)}>
+                View All
+              </Button>
+            ) : (
+              <Button fullWidth disableRipple onClick={() => setLimitRead(3)}>
+                View Less
+              </Button>
+            )}
+          </Box>
+        )}
       </MenuPopover>
     </>
   );
@@ -164,9 +167,10 @@ NotificationItem.propTypes = {
     type: PropTypes.string,
     avatar: PropTypes.any,
   }),
+  setMarkedID: PropTypes.func,
 };
 
-function NotificationItem({ notification }) {
+function NotificationItem({ notification, setMarkedID }) {
   const { avatar, title } = renderContent(notification);
 
   const handleMarkMeAsRead = (pk, isUnRead) => {
@@ -175,6 +179,7 @@ function NotificationItem({ notification }) {
         .put(`api/agent/notifications/update/${pk}/`)
         .then((res) => {
           console.log(res);
+          setMarkedID(pk);
         })
         .catch((error) => {
           console.log(error);
@@ -224,35 +229,11 @@ function renderContent(notification) {
     <Typography variant="subtitle2">
       {notification.title}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
+        &nbsp; {sentenceCase(notification.description)}
       </Typography>
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'mail') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'chat_message') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
-      title,
-    };
-  }
   return {
     avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
     title,
