@@ -1,7 +1,7 @@
 import { useState } from 'react';
 // material
 import { styled, alpha } from '@mui/material/styles';
-import { TextField, Slide, IconButton, InputAdornment, MenuItem } from '@mui/material';
+import { TextField, Slide, InputAdornment, MenuItem } from '@mui/material';
 // component
 import Iconify from '../../components/Iconify';
 
@@ -17,9 +17,9 @@ const APPBAR_DESKTOP = 92;
 
 const SearchbarStyle = styled('div')(({ theme }) => ({
   top: 0,
-  left: 0,
+  left: '3%',
   zIndex: 99,
-  width: '100%',
+  width: '85%',
   display: 'flex',
   position: 'absolute',
   alignItems: 'center',
@@ -38,32 +38,22 @@ const SearchbarStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Searchbar() {
-  const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const { setSummary, profile } = useGlobalContext();
+  const { setSummary, profile, setIsSummaryLoading } = useGlobalContext();
 
   const [agentNameList, setAgentNameList] = useState([]);
-  const handleOpen = () => {
-    setOpen((prev) => !prev);
-    fetchAgentsNames(setAgentNameList, 'search');
-  };
+
+  fetchAgentsNames(setAgentNameList, 'search');
 
   const handlSearch = (agentName) => {
     setSearchTerm(agentName);
     const [task, validAgent] = agentName === 'All' ? ['retrieve', profile.agent_name] : ['search', agentName];
-    fetchDashboardSummary(validAgent, setSummary, task);
-    setOpen(false);
+    fetchDashboardSummary(setIsSummaryLoading, validAgent, setSummary, task);
   };
 
   return (
     <div>
-      {!isOpen && (
-        <IconButton onClick={handleOpen}>
-          <Iconify icon="eva:search-fill" width={20} height={20} />
-        </IconButton>
-      )}
-
-      <Slide direction="down" in={isOpen} mountOnEnter unmountOnExit>
+      <Slide direction="down" in mountOnEnter unmountOnExit>
         <SearchbarStyle>
           <TextField
             InputProps={{
@@ -73,7 +63,7 @@ export default function Searchbar() {
                 </InputAdornment>
               ),
             }}
-            placeholder="Search Agent Summary…"
+            label="Select Agent to Display Summary"
             variant="filled"
             select
             fullWidth
@@ -86,9 +76,6 @@ export default function Searchbar() {
               </MenuItem>
             ))}
           </TextField>
-          {/* <Button variant="contained" onClick={handlSearch}>
-              Search
-            </Button> */}
         </SearchbarStyle>
       </Slide>
     </div>

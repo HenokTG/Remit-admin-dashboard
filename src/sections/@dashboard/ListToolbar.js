@@ -89,21 +89,14 @@ export default function ListToolbar({
         />
       )}
 
-      {numSelected > 0 && placeHl === 'Users...' && (
+      {numSelected > 0 && placeHl === 'Users' && (
         <Tooltip title="Delete">
           <IconButton>
             <Iconify icon="eva:trash-2-fill" />
           </IconButton>
         </Tooltip>
       )}
-      {numSelected <= 0 && placeHl === 'Users...' && (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Iconify icon="ic:round-filter-list" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {profile.is_superuser && placeHl !== 'Users...' && (
+      {profile.is_superuser && placeHl !== 'Users' && (
         <Stack
           direction="row"
           flexWrap="wrap"

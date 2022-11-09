@@ -24,9 +24,10 @@ const fetchPayments = (profilePk, setLoading, setPAYMENTLIST, URL) => {
         }));
         setLoading(false);
         setPAYMENTLIST(PAYMENTLIST);
+        console.log(res.config.url);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.config.url);
         setLoading(false);
         setPAYMENTLIST([]);
       });

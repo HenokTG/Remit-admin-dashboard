@@ -6,7 +6,9 @@ import { Card, Typography } from '@mui/material';
 import { fShortenNumber } from '../../../utils/formatNumber';
 // components
 import Iconify from '../../../components/Iconify';
-
+import DashboardLoading from '../../../components/LoadingDash';
+// context and modules
+import { useGlobalContext } from '../../../context';
 // ----------------------------------------------------------------------
 
 const IconWrapperStyle = styled('div')(({ theme }) => ({
@@ -31,6 +33,8 @@ AppWidgetSummary.propTypes = {
 };
 
 export default function AppWidgetSummary({ title, total, icon, color = 'primary', sx, ...other }) {
+  const { isSummaryLoading } = useGlobalContext();
+
   return (
     <Card
       sx={{
@@ -56,7 +60,7 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         <Iconify icon={icon} width={24} height={24} />
       </IconWrapperStyle>
 
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      {isSummaryLoading ? <DashboardLoading /> : <Typography variant="h3">{fShortenNumber(total)}</Typography>}
 
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         {title}

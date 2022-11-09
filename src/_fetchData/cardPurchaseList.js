@@ -24,8 +24,7 @@ const fetchCardPurchases = (profilePk, setLoading, setCARDPURCHASELIST, URL) => 
         }));
         setLoading(false);
         setCARDPURCHASELIST(CARDPURCHASELIST);
-
-        console.log('CARDS: ', CARDPURCHASELIST, res);
+        console.log(res.config.url);
       })
       .catch((error) => {
         console.log(error);

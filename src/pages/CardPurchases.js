@@ -19,6 +19,7 @@ import {
 
 // components
 import Page from '../components/Page';
+import Loading from '../components/Loading';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
@@ -75,7 +76,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function CardPurchases() {
-  const [loading, setLoading] = useState(true);
+  const [cardLoading, setCardLoading] = useState(true);
 
   const { loggedIn, profile, profilePk } = useGlobalContext();
   const navigate = useNavigate();
@@ -84,6 +85,8 @@ export default function CardPurchases() {
   const intialFeatchURL = profile.is_superuser
     ? 'api/remit/admin/transactions/?Status=&Airtime=&Agent=&Paid='
     : `api/remit/transactions/${profilePk}`;
+
+  console.log('URL: ', intialFeatchURL);
 
   const [CARDPURCHASELIST, setCARDPURCHASELIST] = useState([]);
 
@@ -136,12 +139,12 @@ export default function CardPurchases() {
   };
 
   useEffect(() => {
-    setLoading(true);
+    setCardLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
 
-    fetchCardPurchases(profilePk, setLoading, setCARDPURCHASELIST, searchURL);
+    fetchCardPurchases(profilePk, setCardLoading, setCARDPURCHASELIST, searchURL);
 
     // eslint-disable-next-line
   }, [searchURL]);
@@ -182,11 +185,13 @@ export default function CardPurchases() {
 
   return (
     <Page title="Card Purchase List">
-      {!loading && (
-        <Container>
-          <Typography variant="h4" sx={{ mb: 5 }}>
-            Card Purchases
-          </Typography>
+      <Container>
+        <Typography variant="h4" sx={{ mb: 5 }}>
+          Card Purchases
+        </Typography>
+        {cardLoading ? (
+          <Loading />
+        ) : (
           <Card>
             <ListToolbar
               filterName={filterTransactionID}
@@ -276,8 +281,8 @@ export default function CardPurchases() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Card>
-        </Container>
-      )}
+        )}
+      </Container>
     </Page>
   );
 }

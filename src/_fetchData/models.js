@@ -88,7 +88,7 @@ export const fetchNotifications = (profilePk, setNotifications) => {
   }
 };
 
-export const fetchNewsUpdate = (setNewsUpdates) => {
+export const fetchNewsUpdate = (setLoading, setNewsUpdates) => {
   axiosInstance
     .get(`api/agent/list-news`)
     .then((res) => {
@@ -100,10 +100,12 @@ export const fetchNewsUpdate = (setNewsUpdates) => {
         postedAt: new Date(news.update_time),
       }));
       setNewsUpdates(NEWSLIST);
+      setLoading(false);
     })
     .catch((error) => {
       console.log(error);
       setNewsUpdates([]);
+      setLoading(false);
     });
 };
 

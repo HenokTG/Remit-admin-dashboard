@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
+import Loading from '../components/Loading';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
@@ -32,13 +33,13 @@ import fetchAgents from '../_fetchData/agentList';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'agent', label: 'Agent'},
-  { id: 'name', label: 'Full Name'},
-  { id: 'company', label: 'Company'},
-  { id: 'commission', label: 'Commission (%)'},
-  { id: 'phone', label: 'Phone Number'},
-  { id: 'email', label: 'Email Address'},
-  { id: 'isVerified', label: 'Active'},
+  { id: 'agent', label: 'Agent' },
+  { id: 'name', label: 'Full Name' },
+  { id: 'company', label: 'Company' },
+  { id: 'commission', label: 'Commission (%)' },
+  { id: 'phone', label: 'Phone Number' },
+  { id: 'email', label: 'Email Address' },
+  { id: 'isVerified', label: 'Active' },
   { id: '' },
 ];
 
@@ -74,7 +75,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Agent() {
-  const [loading, setLoading] = useState(true);
+  const [agentLoading, setAgentLoading] = useState(true);
 
   const [deletedAgentID, setDeletedAgentID] = useState(0);
 
@@ -97,13 +98,13 @@ export default function Agent() {
   const prevLocation = useLocation();
 
   useEffect(() => {
-    setLoading(true);
+    setAgentLoading(true);
 
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     } else if (profile.is_superuser === false) {
       navigate('/dashboard/');
-    } else fetchAgents(setLoading, setAGENTLIST);
+    } else fetchAgents(setAgentLoading, setAGENTLIST);
 
     // eslint-disable-next-line
   }, [deletedAgentID, profile]);
@@ -159,22 +160,23 @@ export default function Agent() {
 
   return (
     <Page title="Agent List">
-      {!loading && (
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4" gutterBottom>
-              Agents
-            </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="/dashboard/agent-add"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New Agent
-            </Button>
-          </Stack>
-
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" gutterBottom>
+            Agents
+          </Typography>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to="/dashboard/agent-add"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+          >
+            New Agent
+          </Button>
+        </Stack>
+        {agentLoading ? (
+          <Loading />
+        ) : (
           <Card>
             <ListToolbar
               numSelected={selected.length}
@@ -278,8 +280,8 @@ export default function Agent() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Card>
-        </Container>
-      )}{' '}
+        )}
+      </Container>
     </Page>
   );
 }

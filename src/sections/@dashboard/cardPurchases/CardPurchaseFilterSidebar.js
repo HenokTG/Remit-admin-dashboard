@@ -4,6 +4,8 @@ import {
   Box,
   Radio,
   Stack,
+  MenuItem,
+  TextField,
   Button,
   Drawer,
   Divider,
@@ -17,16 +19,6 @@ import {
 // components
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
-// ----------------------------------------------------------------------
-
-export const FILTER_PACKAGE_OPTIONS = ['100 Birr', '200 Birr', '500 Birr', '1000 Birr'];
-export const FILTER_AGENT_OPTIONS = ['Agent 1', 'Agent 2', 'Agent 3', 'Agent 4'];
-export const FILTER_PRICE_OPTIONS = [
-  { value: 'below', label: 'Below 220 Birr' },
-  { value: 'between', label: 'Between 220 - 750 Birr' },
-  { value: 'above', label: 'Above 75 Birr' },
-];
-
 // ----------------------------------------------------------------------
 
 CardPurchaseFilterSidebar.propTypes = {
@@ -79,8 +71,26 @@ export default function CardPurchaseFilterSidebar({
 
         <Scrollbar>
           <Stack spacing={3} sx={{ p: 3 }}>
+            {filterProps && (
+              <FormControl fullWidth>
+                <TextField
+                  select
+                  name="selectAgent"
+                  label={filterProps[0].title}
+                  value={filterProps[0].valueSet}
+                  onChange={(elem) => filterProps[0].callChangeFunc(elem.target.value)}
+                >
+                  {filterProps[0].child.map((option, index) => (
+                    <MenuItem key={index} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </FormControl>
+            )}
+
             {filterProps &&
-              filterProps.map((catg, idx) => {
+              filterProps.slice(1).map((catg, idx) => {
                 const { title, child, valueSet, callChangeFunc } = catg;
                 return (
                   <FormControl key={idx}>

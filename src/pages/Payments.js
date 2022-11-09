@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
+import Loading from '../components/Loading';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import PaymentListHead from '../sections/@dashboard/cardPurchases/Pay_Purcahse_ListHead';
@@ -68,7 +69,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function CardPurchases() {
-  const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState(true);
 
   const { loggedIn, profile, profilePk } = useGlobalContext();
   const navigate = useNavigate();
@@ -120,14 +121,14 @@ export default function CardPurchases() {
   };
 
   useEffect(() => {
-    setLoading(true);
+    setPaymentLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
 
-    fetchPayments(profilePk, setLoading, setPAYMENTLIST, searchURL);
+    fetchPayments(profilePk, setPaymentLoading, setPAYMENTLIST, searchURL);
     // eslint-disable-next-line
-  }, [searchURL]);
+  }, [searchURL, profilePk]);
 
   const [page, setPage] = useState(0);
 
@@ -165,13 +166,15 @@ export default function CardPurchases() {
 
   return (
     <Page title="Payment Recordings">
-      {!loading && (
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4" gutterBottom>
-              Payments
-            </Typography>
-          </Stack>
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" gutterBottom>
+            Payments
+          </Typography>
+        </Stack>
+        {paymentLoading ? (
+          <Loading />
+        ) : (
           <Card>
             <ListToolbar
               filterName={filterPaymentID}
@@ -255,8 +258,8 @@ export default function CardPurchases() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Card>
-        </Container>
-      )}
+        )}
+      </Container>
     </Page>
   );
 }

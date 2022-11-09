@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 // components
 import Page from '../../components/Page';
+import Loading from '../../components/Loading';
 import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
 import Iconify from '../../components/Iconify';
@@ -39,7 +40,7 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function PromoCodes() {
-  const [loading, setLoading] = useState(true);
+  const [PromocodeLoading, setPromocodeLoading] = useState(true);
 
   const [deletedPromocodeID, setDeletedPromocodeID] = useState(0);
 
@@ -54,7 +55,7 @@ export default function PromoCodes() {
   const prevLocation = useLocation();
 
   useEffect(() => {
-    setLoading(true);
+    setPromocodeLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
@@ -63,7 +64,7 @@ export default function PromoCodes() {
       navigate('/dashboard/');
     }
 
-    fetchPromos(setLoading, setPROMOLIST);
+    fetchPromos(setPromocodeLoading, setPROMOLIST);
     // eslint-disable-next-line
   }, [deletedPromocodeID, profile]);
 
@@ -83,22 +84,23 @@ export default function PromoCodes() {
 
   return (
     <Page title="Promotion Code List">
-      {!loading && (
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4" gutterBottom>
-              Promotion Codes
-            </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="/dashboard/manage-models/promo-codes/add"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New Promo-Code
-            </Button>
-          </Stack>
-
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" gutterBottom>
+            Promotion Codes
+          </Typography>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to="/dashboard/manage-models/promo-codes/add"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+          >
+            New Promo-Code
+          </Button>
+        </Stack>
+        {PromocodeLoading ? (
+          <Loading />
+        ) : (
           <Card>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, paddingInline: '2rem', marginTop: '2rem' }}>
@@ -177,8 +179,8 @@ export default function PromoCodes() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Card>
-        </Container>
-      )}{' '}
+        )}
+      </Container>
     </Page>
   );
 }

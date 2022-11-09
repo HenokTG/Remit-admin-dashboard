@@ -17,19 +17,23 @@ import { useGlobalContext } from '../context';
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const { loggedIn, profilePk, summary, setSummary } = useGlobalContext();
+  const { loggedIn, profilePk, summary, setSummary, setIsSummaryLoading } = useGlobalContext();
+
+  const [isNewsLoading, setIsNewsLoading] = useState(true);
   const [newsList, setNewsList] = useState([]);
 
   const navigate = useNavigate();
   const prevLocation = useLocation();
 
   useEffect(() => {
+    setIsSummaryLoading(true);
+    setIsNewsLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
 
-    fetchDashboardSummary(profilePk, setSummary, 'retrieve');
-    fetchNewsUpdate(setNewsList);
+    fetchDashboardSummary(setIsSummaryLoading, profilePk, setSummary, 'retrieve');
+    fetchNewsUpdate(setIsNewsLoading, setNewsList);
     // eslint-disable-next-line
   }, []);
 
@@ -39,7 +43,6 @@ export default function DashboardApp() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back
         </Typography>
-
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={2}>
             <AppWidgetSummary
@@ -86,7 +89,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate title="News Update" list={newsList} />
+            <AppNewsUpdate title="News Update" list={newsList} isNewsLoading={isNewsLoading} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>

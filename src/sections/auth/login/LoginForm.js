@@ -75,6 +75,7 @@ export default function LoginForm() {
           label="Password"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
+            autoComplete: 'true',
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">

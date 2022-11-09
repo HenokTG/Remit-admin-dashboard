@@ -17,6 +17,8 @@ export default function AppProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
 
+   const [isSummaryLoading, setIsSummaryLoading] = useState(true);
+
   return (
     <myContext.Provider
       value={{
@@ -32,6 +34,8 @@ export default function AppProvider({ children }) {
         setLoading,
         summary,
         setSummary,
+        isSummaryLoading,
+        setIsSummaryLoading,
       }}
     >
       {children}

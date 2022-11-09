@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 // components
 import Page from '../../components/Page';
+import Loading from '../../components/Loading';
 import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
 import Iconify from '../../components/Iconify';
@@ -38,7 +39,7 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function Packages() {
-  const [loading, setLoading] = useState(true);
+  const [packageLoading, setPackageLoading] = useState(true);
 
   const [deletedPackageID, setDeletedPackageID] = useState(0);
 
@@ -53,7 +54,7 @@ export default function Packages() {
   const prevLocation = useLocation();
 
   useEffect(() => {
-    setLoading(true);
+    setPackageLoading(true);
     if (loggedIn === false) {
       navigate(`/login?redirectTo=${prevLocation.pathname}`);
     }
@@ -62,7 +63,7 @@ export default function Packages() {
       navigate('/dashboard/');
     }
 
-    fetchPackages(setLoading, setPACKAGELIST);
+    fetchPackages(setPackageLoading, setPACKAGELIST);
 
     // eslint-disable-next-line
   }, [deletedPackageID, profile]);
@@ -84,22 +85,23 @@ export default function Packages() {
 
   return (
     <Page title="Mobile Package List">
-      {!loading && (
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4" gutterBottom>
-              Packages
-            </Typography>
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="/dashboard/manage-models/packages/add"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New Package
-            </Button>
-          </Stack>
-
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" gutterBottom>
+            Packages
+          </Typography>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to="/dashboard/manage-models/packages/add"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+          >
+            New Package
+          </Button>
+        </Stack>
+        {packageLoading ? (
+          <Loading />
+        ) : (
           <Card>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, paddingInline: '2rem', marginTop: '2rem' }}>
@@ -163,8 +165,8 @@ export default function Packages() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Card>
-        </Container>
-      )}{' '}
+        )}
+      </Container>
     </Page>
   );
 }

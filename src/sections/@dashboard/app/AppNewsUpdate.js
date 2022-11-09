@@ -7,17 +7,19 @@ import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
+import DashboardLoading from '../../../components/LoadingDash';
 // context and modules
 import { fetchNewsDetail } from '../../../_fetchData/models';
 // ----------------------------------------------------------------------
 
 AppNewsUpdate.propTypes = {
   title: PropTypes.string,
+  isNewsLoading: PropTypes.bool,
   subheader: PropTypes.string,
   list: PropTypes.array.isRequired,
 };
 
-export default function AppNewsUpdate({ title, subheader, list, ...other }) {
+export default function AppNewsUpdate({ title, subheader, list, isNewsLoading, ...other }) {
   const [margin, setMargin] = useState([0, 3]);
   const [newsID, setNewsID] = useState(0);
   const [isViewHeadline, setIsViewHeadline] = useState(true);
@@ -48,11 +50,15 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
           <CardHeader title={`${title} (${list.length})`} subheader={subheader} />
 
           <Scrollbar>
-            <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-              {list.slice(margin[0], margin[1]).map((news) => (
-                <NewsItem key={news.id} news={news} setDetailView={setIsViewHeadline} setNewsID={setNewsID} />
-              ))}
-            </Stack>
+            {isNewsLoading ? (
+              <DashboardLoading />
+            ) : (
+              <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
+                {list.slice(margin[0], margin[1]).map((news) => (
+                  <NewsItem key={news.id} news={news} setDetailView={setIsViewHeadline} setNewsID={setNewsID} />
+                ))}
+              </Stack>
+            )}
           </Scrollbar>
 
           <Divider />
@@ -144,7 +150,7 @@ function NewsDetail({ newsID, setDetailView }) {
     fetchNewsDetail(newsID, setNewDeatil);
     // eslint-disable-next-line
   }, []);
-  
+
   const { title, description, postedAt } = newDeatil;
 
   return (
